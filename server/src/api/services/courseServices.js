@@ -1,10 +1,12 @@
 import axios from "axios";
 import { CLIENT_ID, CLIENT_SECRET } from "../config/config.js";
 
-const courseServices = async (searchKeyword) => {
+export const courseServices = async (keyword, page = 1) => {
+  const pageSize = 100;
+
   const options = {
     method: "GET",
-    url: `https://www.udemy.com/api-2.0/courses/?search=${searchKeyword}`,
+    url: `https://www.udemy.com/api-2.0/courses/?search=${keyword}&sort=popularity&page=${page}&page_size=${pageSize}`,
     headers: {
       Authorization: `Basic ${btoa(`${CLIENT_ID}:${CLIENT_SECRET}`)}`,
     },
@@ -16,8 +18,27 @@ const courseServices = async (searchKeyword) => {
     return result;
   } catch (err) {
     console.log("CourseList Error", err);
-    throw err; // Rethrow the error to handle it in the controller
+    throw err;
   }
 };
 
-export default courseServices;
+ 
+export const courseDetailsServices = async (id) => {
+  const options = {
+    method: "GET",
+    url: `https://www.udemy.com/api-2.0/courses/${id}`,
+    headers: {
+      Authorization: `Basic ${btoa(`${CLIENT_ID}:${CLIENT_SECRET}`)}`,
+    },
+  };
+
+  try {
+    const res = await axios(options);
+    const data = res.data;
+    return data;
+  } catch (err) {
+    console.log(`Error : ${err}`);
+  }
+};
+
+  

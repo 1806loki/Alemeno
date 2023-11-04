@@ -1,0 +1,16 @@
+.courseList .courseContainer {
+  padding: 20px;
+  display: flex;
+  justify-content: flex-start;
+  gap: 20px;
+}
+
+
+.courseList .courseContainer img {
+    height: 200px;
+}
+
+.courseList .courseContainer .content img{
+    height: 100px;
+    
+}

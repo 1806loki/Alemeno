@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors"
 import bodyParser from "body-parser";
-import courseListRouter from "./src/api/routes/courseRouter.js";
+import courseRouter from "./src/api/routes/courseRouter.js";
 import errorHandler from "./src/api/middlewares/errorMiddleware.js";
 const app = express();
 
@@ -23,7 +23,7 @@ app.get("/api", (req, res) => {
   res.send("API");
 });
 
-app.use("/api", courseListRouter,);
+app.use("/api", courseRouter,);
 
 
 app.listen(3000, () => console.log("Server is Running at 3000"));

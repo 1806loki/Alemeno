@@ -1,49 +1,91 @@
-import { useEffect, useState } from "react";
-import "./Navbar.css";
+import { fetchCoursesAsync } from "../../redux/features/course/courseAction";
+import { useDispatch, useSelector } from "react-redux";
 import { FaSearch } from "react-icons/fa";
-import axios from "axios";
+import { useState } from "react";
+import "./Navbar.css";
+import { setCourses } from "../../redux/features/course/courseSlice";
+import { debounce } from "lodash";
+import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
+  const dispatch = useDispatch();
+
+  const courses = useSelector(setCourses);
   const [keyword, setKeyword] = useState("");
-  const [courses, setCourses] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const courseList = courses.payload.courses;
 
-  useEffect(() => {
-    const delayDebounceFn = setTimeout(() => {
-      const fetchCourses = async () => {
-        const API = "http://localhost:3000/api/course/";
-        try {
-          const response = await axios.get(API, {
-            params: {
-              keyword: keyword,
-            },
-          });
-          const coursesData = response.data;
-          setCourses(coursesData);
-        } catch (err) {
-          console.log(`Error: ${err}`);
-        }
-      };
+  const suggestionWords = courseList.data.filter(
+    (course) =>
+      course.title.toLowerCase().includes(keyword.toLowerCase()) ||
+      course.headline.toLowerCase().includes(keyword.toLowerCase())
+  );
 
-      fetchCourses();
-    }, 300); // Delay API call by 300 milliseconds after user stops typing
+  const navigate = useNavigate();
 
-    // Cleanup function to clear the timeout on every keystroke
-    return () => clearTimeout(delayDebounceFn);
-  }, [keyword]);
+  console.log(suggestionWords);
+  console.log(courses.payload.courses);
 
+  const handleInputChange = (e) => {
+    const newKeyword = e.target.value;
+    setKeyword(newKeyword);
+    setShowSuggestions(true);
+
+    const debouncedFetchCourses = debounce((keyword) => {
+      dispatch(fetchCoursesAsync(keyword));
+    }, 2000);
+
+    debouncedFetchCourses(newKeyword);
+  };
+
+  const handleSuggestionClick = (suggestion) => {
+    setKeyword(suggestion);
+    setShowSuggestions(false);
+    navigate("/courseList");
+  };
   return (
     <nav className="navbar">
       <h1>Logo</h1>
-      <div className="searchBar">
-        <FaSearch className="searchIcon" />
-        <input type="search" onChange={(e) => setKeyword(e.target.value)} />
-      </div>
-        <div className="auth">
-          <button>Login</button>
-          <button>Login</button>
+      <div className="searchContainer">
+        <div className="searchBar">
+          <FaSearch className="searchIcon" />
+          <input
+            type="search"
+            value={keyword}
+            onChange={handleInputChange}
+            placeholder="Search for courses..."
+            autoComplete="false"
+            autoCorrect="false"
+          />
         </div>
+        <div
+          className="suggestions"
+          style={{ display: showSuggestions ? "block" : "none" }}
+        >
+          {suggestionWords ? (
+            <ul>
+              {suggestionWords.map((item, index) => (
+                <li
+                  onClick={() => handleSuggestionClick(item.title)}
+                  key={index}
+                >
+                  <FaSearch className="searchIcon" />
+                  {item.title}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <h2>No Such data is found</h2>
+          )}
+        </div>
+      </div>
+      <div className="auth">
+        <button>Login</button>
+        <button>Login</button>
+      </div>
     </nav>
   );
 };
 
 export default Navbar;
+
