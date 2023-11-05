@@ -2,7 +2,7 @@ import axios from "axios";
 
 export const fetchCourses = async (keyword) => {
   try {
-    const API = "http://localhost:3000/api/course/";
+    const API = "http://localhost:3000/api/courses/";
     const response = await axios.get(API, {
       params: {
         keyword: keyword,
@@ -17,21 +17,14 @@ export const fetchCourses = async (keyword) => {
   }
 };
 
-export const fetchCourseDetails = async (id) => {
+export const fetchCourseDetails = async (courseId) => {
   try {
-    const API = `http://localhost:3000/api/course/${id}`;
-    const response = await fetch(API, {
-      params: {
-        id: id,
-      },
-    });
-    const courseDetailsData = response.data;
-    console.log(courseDetailsData);
-    return courseDetailsData;
+    const API = `http://localhost:3000/api/courses/${courseId}`;
+    const response = await axios.get(API);
+    const courseDetails = response.data;
+    return courseDetails;
   } catch (err) {
     console.log(`Error : ${err}`);
-    throw err
+    throw err;
   }
 };
-
- 

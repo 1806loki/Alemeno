@@ -1,7 +1,7 @@
 import axios from "axios";
 import { CLIENT_ID, CLIENT_SECRET } from "../config/config.js";
 
-export const courseServices = async (keyword, page = 1) => {
+export const courseService = async (keyword, page = 1) => {
   const pageSize = 100;
 
   const options = {
@@ -22,11 +22,10 @@ export const courseServices = async (keyword, page = 1) => {
   }
 };
 
- 
-export const courseDetailsServices = async (id) => {
+export const courseDetailsService = async (courseId) => {
   const options = {
     method: "GET",
-    url: `https://www.udemy.com/api-2.0/courses/${id}`,
+    url: `https://www.udemy.com/api-2.0/courses/${courseId}`,
     headers: {
       Authorization: `Basic ${btoa(`${CLIENT_ID}:${CLIENT_SECRET}`)}`,
     },
@@ -40,5 +39,3 @@ export const courseDetailsServices = async (id) => {
     console.log(`Error : ${err}`);
   }
 };
-
-  

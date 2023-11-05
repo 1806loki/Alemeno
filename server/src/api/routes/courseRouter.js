@@ -5,7 +5,7 @@ import {
 } from "../controllers/courseController.js";
 const router = express.Router();
 
-router.get("/course", getCourseListController);
-router.post("/course", getCourseListController);
-router.get("/course/:id", getCourseDetailsController);
+router.get("/courses", getCourseListController);
+router.post("/courses", getCourseListController);
+router.get("/courses/:courseId", getCourseDetailsController);
 export default router;

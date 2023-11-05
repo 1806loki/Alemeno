@@ -1,13 +1,13 @@
 import {
-  courseServices,
-  courseDetailsServices,
+  courseService,
+  courseDetailsService,
 } from "../services/courseServices.js";
 
 export const getCourseListController = async (req, res) => {
   const { keyword } = req.query;
 
   try {
-    const courses = await courseServices(keyword);
+    const courses = await courseService(keyword);
     console.log("Courses from backend:", courses);
     return res.json(courses);
   } catch (err) {
@@ -19,10 +19,14 @@ export const getCourseListController = async (req, res) => {
 };
 
 export const getCourseDetailsController = async (req, res) => {
+  const courseId = req.params.courseId;
   try {
-    const response = await courseDetailsServices();
-    return res.stauts(200).json(response);
+    const courseDetails = await courseDetailsService(courseId);
+    console.log("CourseDetails from backend:", courseDetails);
+    return res.json(courseDetails);
   } catch (err) {
-    res.statu(500).json("Internal Server Error", err);
+    res
+      .status(500)
+      .json({ error: "Internal Server Error", message: err.message });
   }
 };
