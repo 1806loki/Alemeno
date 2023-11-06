@@ -4,6 +4,7 @@ import { setCourses, setCourseDetails } from "./courseSlice";
 export const fetchCoursesAsync = (keyword) => async (dispatch) => {
   try {
     const response = await fetchCourses(keyword);
+    console.log("response", response);
     dispatch(setCourses(response));
   } catch (err) {
     console.error("Error fetching courses: ", err);
@@ -14,7 +15,7 @@ export const fetchCoursesAsync = (keyword) => async (dispatch) => {
 export const fetchCourseDetailsAsync = (courseId) => async (dispatch) => {
   try {
     const response = await fetchCourseDetails(courseId);
-    console.log(`courseDetails : ${response}`)
+    console.log(`courseDetails : ${response}`);
     dispatch(setCourseDetails(response));
   } catch (err) {
     console.error(`Error : ${err}`);

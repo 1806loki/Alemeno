@@ -1,43 +1,54 @@
+import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import "./CourseDetails.css";
 import { selectCourseDetails } from "../../redux/features/course/courseSlice";
 import faker from "faker";
-import { useEffect, useState } from "react";
 import { AiOutlineArrowDown } from "react-icons/ai";
 import { AiOutlineArrowUp } from "react-icons/ai";
+import Navbar from "../../layouts/Navbar/Navbar";
 
 const CourseDetails = () => {
   const courseDetails = useSelector(selectCourseDetails);
   const [showSyllabus, setShowSyllabus] = useState(false);
-  const numberOfWeeks = Math.floor(Math.random() * (8 - 4 + 1)) + 4;
-  const enrollments = ["open", "closed", "Inprogress"];
-  const randomEnrollment =
-    enrollments[Math.floor(Math.random() * enrollments.length)];
-  const randomPercentage = Math.floor(Math.random() * 100) + 1; // Generates random percentage between 1 and 100
+  const [generatedData, setGeneratedData] = useState(null);
 
-  const generateSyllabus = (numberOfWeeks) => {
-    const syllabus = [];
-    for (let week = 1; week <= numberOfWeeks; week++) {
-      const topic = faker.lorem.words();
-      const content = faker.lorem.paragraph();
-      syllabus.push({ week, topic, content });
-    }
-    return syllabus;
-  };
   useEffect(() => {
-    generateSyllabus(numberOfWeeks);
-  }, []);
+    const numberOfWeeks = Math.floor(Math.random() * (8 - 4 + 1)) + 4;
+    const enrollments = ["open", "closed", "Inprogress"];
+    const randomEnrollment =
+      enrollments[Math.floor(Math.random() * enrollments.length)];
+    const randomPercentage = Math.floor(Math.random() * 100) + 1;
 
-  const syllabus = generateSyllabus(numberOfWeeks);
-  console.log(syllabus);
+    const generateSyllabus = (numberOfWeeks) => {
+      const syllabus = [];
+      for (let week = 1; week <= numberOfWeeks; week++) {
+        const topic = faker.lorem.words();
+        const content = faker.lorem.paragraph();
+        syllabus.push({ week, topic, content });
+      }
+      return syllabus;
+    };
 
-  if (!courseDetails || !courseDetails.visible_instructors) {
+    const syllabusData = generateSyllabus(numberOfWeeks);
+    setGeneratedData({
+      numberOfWeeks,
+      randomEnrollment,
+      randomPercentage,
+      syllabusData,
+    });
+  }, []);  
+
+  if (!courseDetails || !courseDetails.visible_instructors || !generatedData) {
     return <div className="loading">Loading...</div>;
   }
 
   const instructor = courseDetails.visible_instructors[0];
+  const { numberOfWeeks, randomEnrollment, randomPercentage, syllabusData } =
+    generatedData; 
+
   return (
     <div className="courseDetails">
+      <Navbar />
       <h1>CourseDetails</h1>
       <div className="courseDetails-details">
         {courseDetails && (
@@ -70,14 +81,14 @@ const CourseDetails = () => {
               </div>
             </div>
             <h2>Syllabus</h2>
-            <button onClick={() => setShowSyllabus(!showSyllabus)}>
+            <button onClick={() => setShowSyllabus(!showSyllabus)} className="syllabusButton">
               {showSyllabus ? "Hide the syllabus" : "Show the syllabus"}
               {showSyllabus ? <AiOutlineArrowUp /> : <AiOutlineArrowDown />}
             </button>
             <div
               className={`syllabus ${showSyllabus ? "expandSyllabus" : null}`}
             >
-              {syllabus.map((item, index) => (
+              {syllabusData.map((item, index) => (
                 <div key={index}>
                   <h3>week {item.week}</h3>
                   <h3>topic : {item.topic}</h3>
