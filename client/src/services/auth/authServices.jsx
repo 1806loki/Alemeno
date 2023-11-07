@@ -18,29 +18,28 @@ const Auth = () => {
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    try {
-      console.log("1");
-      console.log("Email:", email);
-      console.log("Password:", password);
 
-      const response = dispatch(handleRegisterAsync(email, password));
-      if (response.status === 201) {
-        console.log("2");
+    console.log("Email:", email);
+    console.log("Password:", password);
 
-        toast.success("Registered Successfully");
-        dispatch(setUser({ email: email, password: password }));
-        dispatch(handleLoginAsync(email, password));
-        toast.success("Logged in Successfully");
-        console.log("4");
+    const response = dispatch(handleRegisterAsync(email, password));
+    response
+      .then((response) => {
+        console.log("register response", response);
+        if (response.status === 201) {
+          toast.success("Registered Successfully");
+          dispatch(setUser({ email: email, password: password }));
+          dispatch(handleLoginAsync(email, password));
+          toast.success("Logged in Successfully");
 
-        navigate("/");
-      } else if (response.status === 400) {
-        toast.error("Email already exits");
-      }
-    } catch (error) {
-      console.error("Error during registration or login:", error);
-      toast.error("Registration or login failed. Please try again.");
-    }
+          navigate("/");
+        } else if (response.status === 400) {
+          toast.error("Email already exits");
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   return (

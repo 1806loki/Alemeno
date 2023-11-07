@@ -1,10 +1,12 @@
 .courseDetails {
+  height: auto;
   padding: 20px;
 }
 
 .courseDetails h1 {
   text-align: center;
 }
+
 .courseDetails-details {
   background-color: #fff;
   border: 1px solid #e1e1e1;
@@ -91,16 +93,27 @@ p {
   height: auto !important;
 }
 
-button {
-  color: white;
-  background-color: #000;
+.imgSection {
   display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.imgSection button {
+  width: 100%;
+  background: rgb(50, 171, 50);
+}
+button {
+  color: rgb(255, 253, 253);
+  background-color: #213a8b;
+  display: flex;
+  padding: 10px;
   align-items: center;
   justify-content: center;
   gap: 5px;
 }
-
-/* CourseDetails.css */
 
 .progressBarContainer {
   width: 100%;
@@ -116,7 +129,7 @@ button {
   line-height: 30px;
   text-align: center;
   color: #fff;
-  background-color: #4caf50;  
+  background-color: #4caf50;
   border-radius: 5px;
 }
 

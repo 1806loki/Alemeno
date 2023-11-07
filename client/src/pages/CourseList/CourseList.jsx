@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import "./CourseList.css";
 import { setCourses } from "../../redux/features/course/courseSlice";
@@ -9,18 +10,35 @@ const CourseList = () => {
   const courseList = courses.payload.courses.data;
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+
+  const coursesToDisplay = courseList.slice(startIndex, endIndex);
 
   const navigateHandler = (courseId) => {
     dispatch(fetchCourseDetailsAsync(courseId));
-
-    console.log(courseId);
     navigate(`/courseList/${courseId}`);
   };
-  console.log(courses.payload.courses);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
   return (
     <div className="courseList">
       <h1 className="heading">Course List</h1>
-      {courseList.map((item, index) => (
+      <input
+        value={itemsPerPage}
+        type="number"
+        placeholder="Enter of Courses per Page"
+        min="1"
+        max="100"
+        onChange={(e) => setItemsPerPage(e.target.value)}
+      />
+      {coursesToDisplay.map((item, index) => (
         <div
           key={index}
           className="courseContainer"
@@ -38,6 +56,21 @@ const CourseList = () => {
           </div>
         </div>
       ))}
+      {/* Pagination UI */}
+      <div className="pagination">
+        {Array.from(
+          { length: Math.ceil(courseList.length / itemsPerPage) },
+          (_, index) => (
+            <button
+              key={index}
+              onClick={() => handlePageChange(index + 1)}
+              className={currentPage === index + 1 ? "active" : ""}
+            >
+              {index + 1}
+            </button>
+          )
+        )}
+      </div>
     </div>
   );
 };

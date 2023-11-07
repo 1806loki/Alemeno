@@ -1,7 +1,7 @@
 import { fetchCoursesAsync } from "../../redux/features/course/courseAction";
 import { useDispatch, useSelector } from "react-redux";
 import { FaSearch } from "react-icons/fa";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import "./Navbar.css";
 import { setCourses } from "../../redux/features/course/courseSlice";
 import { debounce } from "lodash";
@@ -9,20 +9,15 @@ import { useNavigate } from "react-router-dom";
 import {
   isAuthenticated,
   logout,
-  selectToken,
   selectUser,
 } from "../../redux/features/auth/authSlice";
 import { toast } from "react-toastify";
+import { fetchEnrolledCoursesAsync } from "../../redux/features/user/userAction";
 
 const Navbar = () => {
   const dispatch = useDispatch();
   const isUserAuthenticated = useSelector(isAuthenticated);
   const user = useSelector(selectUser);
-  const token = useSelector(selectToken);
-
-  useEffect(() => {
-    console.log(`User : ${user} , TOken : ${token}`);
-  }, []);
 
   const courses = useSelector(setCourses);
   const [keyword, setKeyword] = useState("");
@@ -43,9 +38,6 @@ const Navbar = () => {
         .toLowerCase()
         .includes(keyword.toLowerCase())
   );
-
-  console.log(suggestionWords);
-  console.log(courses.payload.courses);
 
   const handleInputChange = (e) => {
     const newKeyword = e.target.value;
@@ -97,11 +89,15 @@ const Navbar = () => {
   };
 
   const dashboardHandler = () => {
-    navigate("/dashboard");
+    navigate(`/dashboard/${user}`);
+    dispatch(fetchEnrolledCoursesAsync(user));
+  };
+  const homeHandler = () => {
+    navigate("/");
   };
   return (
     <nav className="navbar">
-      <h1>Logo</h1>
+      <h1 onClick={homeHandler}>Logo</h1>
       <div className="searchContainer">
         <div className="searchBar">
           <FaSearch className="searchIcon" />
@@ -110,8 +106,9 @@ const Navbar = () => {
             value={keyword}
             onChange={handleInputChange}
             placeholder="Search for courses..."
-            autoComplete="false"
             autoCorrect="false"
+            autoComplete="off"
+            name="search"
           />
         </div>
         <div
@@ -152,7 +149,6 @@ const Navbar = () => {
         </div>
       </div>
       <div className="auth">
-        <h3>{user}</h3>
         {isUserAuthenticated ? (
           <button onClick={logoutHandler}> Logout</button>
         ) : (

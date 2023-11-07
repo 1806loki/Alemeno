@@ -1,17 +1,41 @@
 import { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import "./CourseDetails.css";
 import { selectCourseDetails } from "../../redux/features/course/courseSlice";
 import faker from "faker";
 import { AiOutlineArrowDown } from "react-icons/ai";
 import { AiOutlineArrowUp } from "react-icons/ai";
 import Navbar from "../../layouts/Navbar/Navbar";
+import { isAuthenticated } from "../../redux/features/auth/authSlice";
+import { handleEnrollmentAsync } from "../../redux/features/user/userAction";
+import { toast } from "react-toastify";
+import { selectUser } from "../../redux/features/auth/authSlice";
+import { selectEnrolledCoursesID } from "../../redux/features/user/userSlice";
 
 const CourseDetails = () => {
   const courseDetails = useSelector(selectCourseDetails);
   const [showSyllabus, setShowSyllabus] = useState(false);
   const [generatedData, setGeneratedData] = useState(null);
+  const isUserAuthenticated = useSelector(isAuthenticated);
+  const [enroll, setEnroll] = useState(false);
+  const user = useSelector(selectUser);
+  const dispatch = useDispatch();
+  const enrolledCoursesID = useSelector(selectEnrolledCoursesID);
+   
 
+  useEffect(() => {
+    const enrollHandler = () => {
+      if (courseDetails && enrolledCoursesID) {
+        if (enrolledCoursesID.some((item) => item === courseDetails.id)) {
+          setEnroll(true);
+        } else {
+          setEnroll(false);
+        }
+      }
+    };
+
+    enrollHandler();
+  }, [enrolledCoursesID, courseDetails]);
   useEffect(() => {
     const numberOfWeeks = Math.floor(Math.random() * (8 - 4 + 1)) + 4;
     const enrollments = ["open", "closed", "Inprogress"];
@@ -36,7 +60,7 @@ const CourseDetails = () => {
       randomPercentage,
       syllabusData,
     });
-  }, []);  
+  }, []);
 
   if (!courseDetails || !courseDetails.visible_instructors || !generatedData) {
     return <div className="loading">Loading...</div>;
@@ -44,7 +68,24 @@ const CourseDetails = () => {
 
   const instructor = courseDetails.visible_instructors[0];
   const { numberOfWeeks, randomEnrollment, randomPercentage, syllabusData } =
-    generatedData; 
+    generatedData;
+
+  const enrollmentHandler = () => {
+    if (isUserAuthenticated) {
+      try {
+        const response = dispatch(
+          handleEnrollmentAsync(user, courseDetails.id)
+        );
+        console.log(`enroll Response ${response}`);
+        setEnroll("Successfully Enrolled");
+        toast.success("Successfully Enrolled");
+      } catch (err) {
+        console.log("enroll error", err);
+      }
+    } else {
+      toast.error("Please Login to Enroll or Already got Enrolled ");
+    }
+  };
 
   return (
     <div className="courseDetails">
@@ -72,16 +113,24 @@ const CourseDetails = () => {
                   </div>
                 )}
               </div>
-              <div>
+              <div className="imgSection">
                 <img
                   src={courseDetails.image_480x270}
                   alt={courseDetails.title}
                   className="coursePhoto"
                 />
+                {!enroll ? (
+                  <button onClick={enrollmentHandler}>Enroll</button>
+                ) : (
+                  <button disabled>Already Enrolled</button>
+                )}
               </div>
             </div>
             <h2>Syllabus</h2>
-            <button onClick={() => setShowSyllabus(!showSyllabus)} className="syllabusButton">
+            <button
+              onClick={() => setShowSyllabus(!showSyllabus)}
+              className="syllabusButton"
+            >
               {showSyllabus ? "Hide the syllabus" : "Show the syllabus"}
               {showSyllabus ? <AiOutlineArrowUp /> : <AiOutlineArrowDown />}
             </button>

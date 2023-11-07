@@ -1,20 +1,34 @@
-.home .hero {
+/* Home.css */
+
+.hero {
+  background-color: #f0f0f0;
   padding: 20px;
+  margin-bottom: 20px;
 }
 
-.hero p {
-  background-color:#f0f0f0;
-  font-size: 20px;
-  padding: 20px 30px;
+.features {
+  display: flex;
+  justify-content: space-around;
 }
 
-.feautres ul {
-    display: flex;
-    list-style: none;
-    text-align: center;
-    padding:10px 30px;
+.features > div {
+  flex: 1;
+  margin: 0 10px;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.feautres ul li {
-    padding: 20px;
+.features h2 {
+  font-size: 24px;
+  margin-bottom: 10px;
 }
+
+.features p {
+  font-size: 16px;
+  line-height: 1.5;
+  color: #333333;
+}
+
+ 

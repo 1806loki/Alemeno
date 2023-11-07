@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import "./authServices.css";
 import { handleLoginAsync } from "../../redux/features/auth/authAction";
 import { useNavigate } from "react-router-dom";
@@ -11,14 +11,11 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const token = useSelector((state) => state.auth.token);
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
       dispatch(handleLoginAsync(email, password));
-
-      localStorage.setItem("token", token);
 
       toast.success("Logged in Successfully");
 

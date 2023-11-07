@@ -4,7 +4,6 @@ import { setCourses, setCourseDetails } from "./courseSlice";
 export const fetchCoursesAsync = (keyword) => async (dispatch) => {
   try {
     const response = await fetchCourses(keyword);
-    console.log("response", response);
     dispatch(setCourses(response));
   } catch (err) {
     console.error("Error fetching courses: ", err);

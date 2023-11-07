@@ -3,6 +3,7 @@ import cors from "cors";
 import bodyParser from "body-parser";
 import courseRouter from "./src/api/routes/courseRouter.js";
 import authRouter from "./src/api/routes/authRouter.js";
+import userRouter from "./src/api/routes/userRouter.js";
 import errorHandler from "./src/api/middlewares/errorMiddleware.js";
 import connectDB from "./src/api/config/db.js";
 import mongoose from "mongoose";
@@ -32,7 +33,9 @@ app.get("/api", (req, res) => {
   res.send("API");
 });
 
+ 
 app.use("/api", courseRouter);
+app.use("/api", userRouter);
 
 mongoose.connection.once("open", () => {
   console.log(`Connected to MongoDB`);

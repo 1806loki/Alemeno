@@ -14,3 +14,18 @@ const UserSchema = new mongoose.Schema({
 const User = mongoose.model("User", UserSchema);
 
 export default User;
+
+const EnrollmentSchema = new mongoose.Schema({
+  user: {
+    type: String,
+    required: true,
+  },
+  courseIDs: [
+    {
+      type: Number,
+      required: true,
+    },
+  ],
+});
+
+export const Enrollment = mongoose.model("Enrollment", EnrollmentSchema);
